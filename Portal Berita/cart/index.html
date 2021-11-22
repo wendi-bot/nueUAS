@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="shortcut icon" href="https://nabilahmaudiyanti28.files.wordpress.com/2017/11/bon-appetit-logo.png?w=640"
+    type="image/x-icon" />
+</head>
+
+<body>
+  <header class="head-line">
+    <div class="container">VokasiPedia</div>
+  </header>
+  <div class="wrapper" id="app">
+    <div class="container">
+      <main>
+        <div class="box-grid">
+          <div class="item-box" v-for="item in barang">
+            <div class="box-cover">
+              <img v-bind:src="item.image" alt="" />
+            </div>
+            <div class="box-content">
+              <h4 class="product-name">{{item.merek}}</h4>
+              <p class="price">Rp. {{item.harga}}</p>
+              <div class="wrap-add">
+                <input type="number" name="" id="" v-model:value="item.banyak" min="1" />
+                <button v-on:click="tambahCart(item.image, item.harga, parseInt(item.banyak)), isClose = false">
+                  Beli
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <aside>
+        <ul>
+          <li v-for="(list, index) in cart">
+            <div class="wrapper-product">
+              <img v-bind:src="list.image" alt="" />
+              <p class="product-name">Rp. {{list.jumlahBeli}}</p>
+              <br />
+              <button v-on:click="hapusCart(index)">X</button>
+            </div>
+            <small>( Rp. {{list.harga}} x {{list.banyak}} )</small>
+            <div class="pop-up" v-on:click="isClose = true" v-bind:class="{close:isClose}">
+              {{totalBanyak}}
+              <p class="x">X</p>
+              <p v-if="list.banyak === 1">Halo Mas Kurang Banyak Kamu Beli</p>
+              <p v-else-if="list.banyak === 2">Halo Mas Tabah Lagi</p>
+              <p v-else-if="list.banyak === 3">
+                Halo Mas Kok Cuman Beli {{list.banyak}} Ayo Tambah Lagi
+              </p>
+              <p v-else-if="list.banyak >= 4">Terima Kasih Banyak Mas</p>
+            </div>
+          </li>
+          <li>
+            <p>Total Harga : Rp. {{total}}</p>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    let app = new Vue({
+      el: "#app",
+      data: {
+        isClose: false,
+        barang: [
+          {
+            banyak: 1,
+            merek: "Steak",
+            harga: 30000,
+            image:
+              "https://cdn-image.hipwee.com/wp-content/uploads/2016/04/Ljuti-govedji-odrezak.jpg",
+          },
+          {
+            banyak: 1,
+            merek: "Sop Daging",
+            harga: 20000,
+            image:
+              "https://sultanjakarta.com/data/upload/images/81b96d28367ab1707c198e67c300f0c9_crop_920x530.jpg",
+          },
+          {
+            banyak: 1,
+            merek: "Rendang",
+            harga: 21000,
+            image:
+              "https://ecs7.tokopedia.net/blog-tokopedia-com/uploads/2020/02/makanan-korea-halal.jpg",
+          },
+          {
+            banyak: 1,
+            merek: "Bihun sayur",
+            harga: 32000,
+            image:
+              "https://img.okezone.com/content/2018/09/19/298/1952691/5-restoran-makanan-khas-korea-yang-terkenal-lezat-di-jakarta-sudah-coba-f4Djk0Zfqw.jpg",
+          },
+          {
+            banyak: 1,
+            merek: "Mie Telor",
+            harga: 23000,
+            image:
+              "https://cdn1-production-assets-kly.akamaized.net/medias/864424/big-portrait/047393700_1430287390-bibimbab.jpg",
+
+          },
+          {
+            banyak: 1,
+            merek: "Sop Udang",
+            harga: 22000,
+            image:
+              "https://image-cdn.medkomtek.com/VmWLWT3OVJwSBSWRX-eZl-HcS5k=/640x640/smart/klikdokter-media-buckets/medias/2308290/original/085893500_1568630039-Kenali-Bahaya-Sering-Makan-di-Restoran-All-You-Can-Eat-By-FUSIIING-Shutterstock.jpg",
+          },
+
+        ],
+        // barang:[],
+        cart: [],
+      },
+      methods: {
+        tambahCart: function (gambar, harga, banyak) {
+          jumlahBeli = harga * banyak;
+          let obj = {
+            image: gambar,
+            harga: harga,
+            banyak: banyak,
+            jumlahBeli: jumlahBeli,
+          };
+          this.cart.push(obj);
+        },
+        hapusCart: function (index) {
+          this.cart.splice(index, 1);
+        },
+        // sunting: function () {
+        //   axios
+        //     .get(
+        //       "https://my-json-server.typicode.com/wahyubudies/rest_api_server/db"
+        //     )
+        //     .then((response) => (this.barang = response.data["barang"]))
+        //     .catch((error) => console.log(error));
+        // },
+      },
+      computed: {
+        total: function () {
+          return this.cart.reduce(
+            (total, item) => total + item.jumlahBeli,
+            0
+          );
+        },
+        totalBanyak: function () {
+          return this.cart.reduce(
+            (total1, item1) => total1 + item1.banyak,
+            0
+          );
+        },
+      },
+      // mounted() {
+      //   this.sunting();
+      //   this.timer = setInterval(this.sunting, 500);
+      // },
+    });
+  </script>
+</body>
+
+</html>
